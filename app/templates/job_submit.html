@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Submit a Job{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Fill out the form below to request someone to do a job for you</h2>
+            <hr />
+            <ul>
+                <li>All fields are required</li>
+            </ul>
+            <form method="post" action="#" name="job">
+                {{ form.hidden_tag() }}
+                <div class="row uniform">
+                    <div class="6u 12u$(xsmall)">
+                        {{ form.employer_name(placeholder="Your Name") }}
+                    </div>
+                    <div class="6u$ 12u$(xsmall)">
+                        {{ form.employer_email(placeholder="Your Email Address", class="text") }}
+                    </div>
+                    <div class="6u 12u$(xsmall)">
+                        {{ form.location(placeholder="Location", class="text") }}
+                    </div>
+                    <div class="6u$ 12u$(xsmall)">
+                        {{ form.compensation(placeholder="Compensation", class="text") }}
+                    </div>
+                    <div class="12u$">
+                        {{ form.category(placeholder="Select Category", class="select-wrapper") }}
+                    </div>
+                    <div class="12u$">
+                        {{ form.description(placeholder="Enter a description") }}
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" class="button" value="Submit Job" />
+                    </div>
+                </div>
+            </form>
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}
