@@ -9,17 +9,21 @@
         <section>
             <h2>Fill out the form below to request someone to do a job for you</h2>
             <hr />
-            <ul>
-                <li>All fields are required</li>
-            </ul>
+            {% with messages = get_flashed_messages() %}
+                <ul>
+                    <li>All fields are required</li>
+                {% if messages %}
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                {% endif %}
+                </ul>
+            {% endwith %}
             <form method="post" action="#" name="job">
                 {{ form.hidden_tag() }}
                 <div class="row uniform">
-                    <div class="6u 12u$(xsmall)">
-                        {{ form.employer_name(placeholder="Your Name") }}
-                    </div>
-                    <div class="6u$ 12u$(xsmall)">
-                        {{ form.employer_email(placeholder="Your Email Address", class="text") }}
+                    <div class="12u$">
+                        {{ form.description(placeholder="Enter a description") }}
                     </div>
                     <div class="6u 12u$(xsmall)">
                         {{ form.location(placeholder="Location", class="text") }}
@@ -31,7 +35,7 @@
                         {{ form.category(placeholder="Select Category", class="select-wrapper") }}
                     </div>
                     <div class="12u$">
-                        {{ form.description(placeholder="Enter a description") }}
+                        {{ form.group(placeholder="Select Group", class="select-wrapper") }}
                     </div>
                     <div class="12u$">
                         <input type="submit" class="button" value="Submit Job" />

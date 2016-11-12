@@ -45,6 +45,12 @@
 							<li><a href="/job_submit">Submit a Job</a></li>
 							<li><a href="/generic">Request to be added</a></li>
 							<li><a href="/elements">Elements</a></li>
+							{% if logged_in %}
+							<li><a href="/logout">Log Out</a></li>
+							{% else %}
+							<li><a href="/login">Log In</a></li>
+							<li><a href="/signup">Sign Up</a></li>
+							{% endif %}
 						</ul>
 					</nav>
 
