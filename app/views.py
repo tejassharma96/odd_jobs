@@ -142,7 +142,8 @@ def login_required(reason):
 	reasons_dict = {
 			'job_submit': 'submit a job',
 			'submitted_jobs': 'view your submitted jobs',
-			'logout': 'logout'
+			'logout': 'logout',
+			'accept_job': 'accept a job'
 	}
 	reason_str = reasons_dict[reason] if reason in reasons_dict else None
 
@@ -159,6 +160,10 @@ def accept_job(job_id):
 	Shows a page to accept a job
 	"""
 
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is None:
+		return redirect(url_for('login_required', reason='accept_job'))
+
 	job = models.Job.query.get(job_id)
 
 	# Make sure the job actually exists
@@ -168,7 +173,7 @@ def accept_job(job_id):
 
 	form = AcceptForm()
 	if form.validate_on_submit():
-		job.employee = "{} ({})".format(form.name.data, form.email.data)
+		job.employee_id = user.id
 		db.session.commit()
 
 	return render_template('accept_job.html',

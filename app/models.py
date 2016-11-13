@@ -9,7 +9,7 @@ class Job(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     employer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    employee = db.Column(db.String(), default=None)
+    employee_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     description = db.Column(db.String())
     compensation = db.Column(db.String())
     location = db.Column(db.String())
@@ -17,6 +17,9 @@ class Job(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     accept_time = db.Column(db.DateTime, default=None)
+
+    employer = db.relationship('User', foreign_keys=[employer_id], backref='submitted_jobs')
+    employee = db.relationship('User', foreign_keys=[employee_id], backref='accepted_jobs')
 
     def __repr__(self):
         repr_str = "{}: {}(group {}) requested someone to {} in {}, with a compensation of {} at {}".format(self.id,
@@ -27,7 +30,7 @@ class Job(db.Model):
                                                                                          self.compensation,
                                                                                          self.timestamp)
         if self.employee:
-            return "{}. It was accepted by {} at {}.".format(repr_str, self.employee, self.accept_time)
+            return "{}. It was accepted by {} at {}.".format(repr_str, self.employee.name, self.accept_time)
 
         return repr_str
 
@@ -60,9 +63,6 @@ class Group(db.Model):
     bot_id = db.Column(db.String(), index=True)
     active = db.Column(db.Boolean, index=True)
 
-    @staticmethod
-    
-
 class User(db.Model):
     """
     Used to represent an employer and store information
@@ -74,7 +74,6 @@ class User(db.Model):
     name = db.Column(db.String())
     email = db.Column(db.String(), unique=True)
     password_hash = db.Column(db.String())
-    submitted_jobs = db.relationship('Job', backref='user', lazy='dynamic')
 
 def get_active_categories():
     """
