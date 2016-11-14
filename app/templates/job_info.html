@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Job Information{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Job Information</h2>
+            <hr />
+            <p>Below is a summary of the job</p>
+            <ul>
+                <li>Employer: {{ employer.name }}</li>
+                <li>Location: {{ job.location }}</li>
+                <li>Description: {{ job.description }}</li>
+                <li>Compensation: {{ job.compensation }}</li>
+                <li>Category: {{ categories[job.category_id] }}</li>
+                {% if job.employee %}
+                <li>Employee: {{ job.employee }}</li>
+                {% else %}
+                <li>Employee: Not yet accepted</li>
+                {% endif %}
+            </ul>
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Accept Job{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Job Information</h2>
+            <hr />
+            <p>Below is a summary of the job</p>
+            <ul>
+                <li>Employer: {{ employer.name }}</li>
+                <li>Location: {{ job.location }}</li>
+                <li>Description: {{ job.description }}</li>
+                <li>Compensation: {{ job.compensation }}</li>
+                <li>Category: {{ categories[job.category_id] }}</li>
+                {% if job.employee %}
+                <li>Employee: {{ job.employee }}</li>
+                {% else %}
+                <li>Employee: Not yet accepted</li>
+                {% endif %}
+            </ul>
+            <hr />
+            {% if accepted %}
+            <p>Oh no! This job has already been accepted by someone. Make sure to check your group regularly so you can be first next time!</p>
+            {% else %}
+                {% if job.employer_id == user.id %}
+                <p>You can't accept your own job. Please go to your <a href="/submitted_jobs">submitted jobs page</a> to delete the job if you no longer require it to be done</p>
+                {% else %}
+                <form method="post" action="#" name="login">
+                    {{ form.hidden_tag() }}
+                    <div class="row uniform">
+                        <div class="12u$">
+                            {{ form.confirm(placeholder="Password") }}
+                            <label for="demo-copy">I confirm that I will complete this job</label>
+                        </div>
+                        <div class="12u$">
+                            <input type="submit" class="button" value="Accept Job" />
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

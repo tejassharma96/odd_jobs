@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Submitted Jobs{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Submitted Jobs</h2>
+            <hr />
+            {% if jobs %}
+            <h3>Your submitted jobs</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Link</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td>{{ job.description }}</td>
+                            <td><a href="/job_info/{{ job.id }}">Info</a></td>
+                            <td><a href="/">Delete</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <h3>You haven't submitted any jobs yet. You can submit some by opening the menu on the right and selecting "Submit a Job".<h3>
+            {% endif %}
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Accepted Jobs{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Accepted Jobs</h2>
+            <hr />
+            {% if jobs %}
+            <h3>Your accepted jobs</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Link</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td>{{ job.description }}</td>
+                            <td><a href="/job_info/{{ job.id }}">Info</a></td>
+                            <td><a href="/">Delete</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <h3>You haven't accepted any jobs yet. You can accept some by joining a group (if you haven't already) and pressing the link in a message to accept a job.<h3>
+            {% endif %}
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}

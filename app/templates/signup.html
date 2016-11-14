@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Please enter the following information to create an account</h2>
+            <hr />
+            <form method="post" action="#" name="login">
+                {{ form.hidden_tag() }}
+                <div class="row uniform">
+                    <div class="12u$">
+                        {{ form.username(placeholder="Username") }}
+                    </div>
+                    <div class="12u$">
+                        {{ form.name(placeholder="Name") }}
+                    </div>
+                    <div class="12u$">
+                        {{ form.email(placeholder="Email") }}
+                    </div>
+                    <div class="12u$">
+                        {{ form.password(placeholder="Password") }}
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" class="button" value="Sign Up" />
+                    </div>
+                </div>
+            </form>
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+#!/home/tejassharma/Class/CS242/OddJobs/flask/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'pipdeptree==0.8.0','console_scripts','pipdeptree'
+__requires__ = 'pipdeptree==0.8.0'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('pipdeptree==0.8.0', 'console_scripts', 'pipdeptree')()
+    )
