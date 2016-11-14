@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField, PasswordField
+from wtforms import StringField, SelectField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email
 from app import models
 
@@ -45,5 +45,4 @@ class AcceptForm(FlaskForm):
     """
     This is the form an employee has to fill out to accept a job
     """
-    name = StringField('Name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    confirm = BooleanField('Confirm', validators=[DataRequired()])

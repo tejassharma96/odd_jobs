@@ -107,8 +107,11 @@ def signup():
 						   email = form.email.data,
 						   name = form.name.data)
 		db.session.add(user)
-		db.session.commit()
-		session['user_id'] = user.id
+		try:
+			db.session.commit()
+			session['user_id'] = user.id
+		except sqlalchemy.exc.IntegrityError:
+			print('u idiot')
 		return redirect(url_for('index'))
 
 	return render_template("signup.html",
@@ -126,7 +129,23 @@ def submitted_jobs():
 	if user is None:
 		return redirect(url_for('login_required', reason='submitted_jobs'))
 	
-	jobs = user.submitted_jobs.all()
+	jobs = user.submitted_jobs
+	return render_template("submitted_jobs.html",
+						   user=user,
+						   jobs=jobs,
+						   logged_in='user_id' in session)
+
+@app.route('/accepted_jobs')
+def accepted_jobs():
+	"""
+	Shows the status of all submitted jobs
+	"""
+
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is None:
+		return redirect(url_for('login_required', reason='submitted_jobs'))
+	
+	jobs = user.accepted_jobs
 	return render_template("submitted_jobs.html",
 						   user=user,
 						   jobs=jobs,
@@ -154,7 +173,7 @@ def login_required(reason):
 						   reason=reason_str,
 						   logged_in='user_id' in session)
 
-@app.route('/accept_job/job_id')
+@app.route('/accept_job/<job_id>')
 def accept_job(job_id):
 	"""
 	Shows a page to accept a job
@@ -179,6 +198,10 @@ def accept_job(job_id):
 	return render_template('accept_job.html',
 						   form=form,
 						   job=job,
+						   categories=models.get_active_categories(),
+						   user=user,
+						   employer=job.employer,
+						   accepted=job.employee is not None,
 						   logged_in='user_id' in session)
 
 @app.route('/logout')
