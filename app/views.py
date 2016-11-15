@@ -242,12 +242,12 @@ Location: {}
 Description: {}
 Compensation: {}
 Category: {}
-Please visit 127.0.0.1:5000{} to accept this job'''.format(employer.name,
+Please visit {} to accept this job'''.format(employer.name,
 					  						 job.location,
 					  						 job.description,
 					  						 job.compensation,
 					  						 categories[job.category_id],
-					  						 url_for('accept_job', job_id=job.id))
+					  						 url_for('accept_job', job_id=job.id, _external=True))
 	
 	bot.post(message_string)
 	return True
