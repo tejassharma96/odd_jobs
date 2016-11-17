@@ -26,6 +26,7 @@ def job_submit():
 	if user is None:
 		return redirect(url_for('login_required', reason='job_submit'))
 
+	# Create the form and set up validation
 	form = JobForm()
 	if form.validate_on_submit():
 		job = models.Job(employer_id=user.id,
