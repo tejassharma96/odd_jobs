@@ -25,3 +25,8 @@ var/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+
+# Untracked for security
+*.db
+migrations/
+tmp/
