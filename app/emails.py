@@ -9,7 +9,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
     msg.html = html_body
     mail.send(msg)
 
-def sent_accepted_to_employer(job):
+def send_job_email(job):
     employer = job.employer
     employee = job.employee
     if employee is None or employer is None:
@@ -23,17 +23,8 @@ def sent_accepted_to_employer(job):
                            employee=employee,
                            employer=employer)
 
-    send_email(subject='test',
+    send_email(subject='Odd Jobs Introduction!',
                sender=ADMINS[0],
                recipients=[employer.email, employee.email],
                text_body=text,
                html_body=html)
-
-
-
-def test_email():
-    send_email(subject='test',
-               sender=ADMINS[0],
-               recipients=[ADMINS[1]],
-               text_body="test",
-               html_body="test")

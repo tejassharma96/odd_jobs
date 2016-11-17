@@ -3,6 +3,7 @@ from app import app, db, models, emails
 from .forms import JobForm, LoginForm, SignupForm, AcceptForm
 import hashlib
 import groupy
+import datetime
 
 
 @app.route('/')
@@ -183,7 +184,7 @@ def login_required(reason):
 						   reason=reason_str,
 						   logged_in='user_id' in session)
 
-@app.route('/accept_job/<job_id>')
+@app.route('/accept_job/<job_id>', methods=['GET', 'POST'])
 def accept_job(job_id):
 	"""
 	Shows a page to accept a job
@@ -202,7 +203,10 @@ def accept_job(job_id):
 
 	form = AcceptForm()
 	if form.validate_on_submit():
+		# Edit job before sending email
 		job.employee_id = user.id
+		job.accept_time = datetime.datetime.utcnow()
+		emails.send_job_email(job)
 		db.session.commit()
 
 	return render_template('accept_job.html',
@@ -281,9 +285,3 @@ def generic():
 @app.route('/elements')
 def elements():
 	return render_template("elements.html")
-
-
-@app.route('/email')
-def email():
-	emails.test_email()
-	return "sent!"
