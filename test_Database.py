@@ -1,56 +1,69 @@
-import os
+from config import basedir
+from app import app, db
+from app.models import Job, Category, User, Group
+
+from flask import Flask
+from flask_testing import TestCase
 import unittest
+import os
 import logging
 import sys
 import time
 
-from config import basedir
-from app import app, db
-from app.models import Job, Category, User
+class TestDatabase(TestCase):
 
+    def create_app(self):
 
-class TestDatabase(unittest.TestCase):
-    def setUp(self):
+        app = Flask(__name__)
         app.config['TESTING'] = True
         app.config['CSRF_ENABLED'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'test.db')
-        self.app = app.test_client()
+        return app
+
+    def setUp(self):
+
         db.create_all()
+        duplicate_check = Group.query.filter_by(bot_name='OddJobBot').first()
+        if duplicate_check is not None:
+            return
+        group = Group(bot_name='OddJobBot', group_name='oddjobs', group_id=26687080, bot_id='41a362cc6509e68c26a9483529', active=True)
+        db.session.add(group)
+        db.session.commit()
 
     def tearDown(self):
+
         db.session.remove()
         db.drop_all()
 
     def create_job(self, employer_id, compensation, location, description, category_id, group_id):
         """
-        Mocks creating a new job through the website
+        Creates a new job and adds it to the db
         """
 
-        data_dict = {'employer_id': employer_id,
-                     'group_id': group_id,
-                     'compensation': compensation,
-                     'location': location,
-                     'description': description,
-                     'category_id': str(category_id)}
-        return self.app.post('/job_submit', data=data_dict, follow_redirects=True)
+        job = Job(employer_id=employer_id, group_id=group_id, compensation=compensation, location=location, category_id=category_id, description=description) 
+        db.session.add(job)
+        db.session.commit()
 
     def create_user(self, username, password, email, name):
         """
-        Mocks creating a new user through the website
+        Creates a new job and adds  it to the db
         """
 
-        data_dict = {'username': username,
-                     'password': password,
-                     'email': email,
-                     'name': name}
-        return self.app.post('/signup', data=data_dict, follow_redirects=True)
+        duplicate_check = User.query.filter_by(username=username).first()
+        if duplicate_check is not None:
+            return
+        user = User(username=username, password=password, email=email, name=name)
+        db.session.add(user)
+        db.session.commit()
 
     def create_category(self, category_name):
         """
-        Creates a new category
-        Currently no way to do this in the website
+        Creates a new category and adds it to the db
         """
         
+        duplicate_check = Category.query.filter_by(name=category_name).first()
+        if duplicate_check is not None:
+            return
         category = Category(name=category_name, active=True)
         db.session.add(category)
         db.session.commit()
@@ -92,8 +105,5 @@ class TestDatabase(unittest.TestCase):
         comment = Comment.query.filter_by(compensation="1;DROP TABLE Job").first()
         self.assertTrue(comment)
 
-
 if __name__ == '__main__':
-    logging.basicConfig(stream=sys.stderr)
-    logging.getLogger("TestDatabase.test_reply_post").setLevel(logging.DEBUG)
     unittest.main()

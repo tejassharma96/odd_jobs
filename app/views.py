@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, abort, request, session, flash
-from app import app, db, models
+from app import app, db, models, emails
 from .forms import JobForm, LoginForm, SignupForm, AcceptForm
 import hashlib
 import groupy
@@ -77,6 +77,11 @@ def login():
 	The login page
 	"""
 
+	# Just redirect them to index if they are already logged in
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is not None:
+		return redirect(url_for('index'))
+
 	form = LoginForm()
 	if form.validate_on_submit():
 		username = form.username.data
@@ -99,6 +104,11 @@ def signup():
 	"""
 	The signup page
 	"""
+
+	# Just redirect them to index if they are already logged in
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is not None:
+		return redirect(url_for('index'))
 
 	form = SignupForm()
 	if form.validate_on_submit():
@@ -225,13 +235,22 @@ def page_not_found(error):
 	"""
 	return render_template("404.html"), 404
 
+
+@app.errorhandler(500)
+def internal_error(error):
+	"""
+	500 Error Handler
+	"""
+	db.session.rollback()
+	return render_template('500.html'), 500
+
 def add_job_to_group(job, group):
 	"""
 	Takes a Job and a Group (as defined in models.py)
 	and adds the job to the group
 	"""
 	categories=models.get_active_categories()
-	employer = models.User.query.get(job.employer_id)
+	employer = job.employer
 	bot = groupy.Bot.list().filter(bot_id=group.bot_id).first
 	if bot is None or employer is None:
 		return False
@@ -263,3 +282,8 @@ def generic():
 def elements():
 	return render_template("elements.html")
 
+
+@app.route('/email')
+def email():
+	emails.test_email()
+	return "sent!"

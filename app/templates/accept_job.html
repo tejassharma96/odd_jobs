@@ -17,7 +17,7 @@
                 <li>Compensation: {{ job.compensation }}</li>
                 <li>Category: {{ categories[job.category_id] }}</li>
                 {% if job.employee %}
-                <li>Employee: {{ job.employee }}</li>
+                <li>Employee: {{ job.employee.name }}</li>
                 {% else %}
                 <li>Employee: Not yet accepted</li>
                 {% endif %}

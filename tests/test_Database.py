@@ -56,7 +56,7 @@ class TestDatabase(unittest.TestCase):
         db.session.commit()
 
     def test_new_job(self):
-        self.create_category('Category')
+        self.create_category('Gardening')
         self.create_user('teja', 'bean', 'tejas.s1996@gmail.com', 'Tejas')
         self.create_job(1, 'nothing lol', 'here', 'description', 1, 1)
 
@@ -69,7 +69,7 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(job_0.category_id, 1)
 
     def test_user_association(self):
-        self.create_category('Category')
+        self.create_category('Gardening')
         self.create_user('teja', 'bean', 'tejas.s1996@gmail.com', 'Tejas')
         self.create_job(1, 'nothing lol', 'here', 'description', 1, 1)
         
@@ -87,12 +87,10 @@ class TestDatabase(unittest.TestCase):
         """
         Test against basic SQL injection attacks (invalidated due to methodology of SQLAlchemy)
         """
-        
-        self.create_category('Category')
-        self.create_user('teja', 'bean', 'tejas.s1996@gmail.com', 'Tejas')
-        self.create_job(1, '1;DROP TABLE Job', 'here', 'description', 1, 1)
-        job = Job.query.filter_by(compensation="1;DROP TABLE Job").first()
-        self.assertTrue(job)
+
+        self.create_job('Tejas', 'tejas.s1996@gmail.com', '1;DROP TABLE Job', 'here', 'description', 1)
+        comment = Comment.query.filter_by(compensation="1;DROP TABLE Job").first()
+        self.assertTrue(comment)
 
 
 if __name__ == '__main__':
