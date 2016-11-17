@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}500 Internal Server Error{% endblock %}
+
+{% block page_source %}
+    <div id="main">
+        <div class="inner">
+            <!-- Text -->
+            <section>
+                <h2>500 Internal Server Error</h2>
+                <p>Oh no! There was an internal server error. Please click the link below to be redirected to the homepage, or navigate to a page using the menu on the right.</p>
+                <hr />
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <h3>Reason for 404:</h3>
+                        <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                <a href="/index" class="button special fit">Home</a>
+            </section>
+        </div>
+    </div>
+{% endblock %}
