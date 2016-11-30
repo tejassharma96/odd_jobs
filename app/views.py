@@ -1,6 +1,5 @@
 from flask import render_template, redirect, url_for, abort, request, session, flash
-from app import app, db, models, emails
-from .forms import JobForm, LoginForm, SignupForm, AcceptForm
+from app import app, db, models, emails, groupme, forms
 import hashlib
 import groupy
 import datetime
@@ -27,7 +26,7 @@ def job_submit():
 		return redirect(url_for('login_required', reason='job_submit'))
 
 	# Create the form and set up validation
-	form = JobForm()
+	form = forms.JobForm()
 	if form.validate_on_submit():
 		job = models.Job(employer_id=user.id,
 						 group_id=int(form.group.data),
@@ -38,7 +37,7 @@ def job_submit():
 		db.session.add(job)
 		db.session.commit()
 		group = models.Group.query.get(job.group_id)
-		add_job_to_group(job, group)
+		groupme.add_job_to_group(job, group)
 		return redirect(url_for('job_info', job_id=job.id))
 	else:
 		for field, errors in form.errors.items():
@@ -84,7 +83,7 @@ def login():
 	if user is not None:
 		return redirect(url_for('index'))
 
-	form = LoginForm()
+	form = forms.LoginForm()
 	if form.validate_on_submit():
 		username = form.username.data
 		password_hash = hashlib.sha256(form.password.data.encode()).hexdigest()
@@ -112,7 +111,7 @@ def signup():
 	if user is not None:
 		return redirect(url_for('index'))
 
-	form = SignupForm()
+	form = forms.SignupForm()
 	if form.validate_on_submit():
 		user = models.User(username=form.username.data,
 						   password_hash = hashlib.sha256(form.password.data.encode()).hexdigest(),
@@ -174,7 +173,8 @@ def login_required(reason):
 			'job_submit': 'submit a job',
 			'submitted_jobs': 'view your submitted jobs',
 			'logout': 'logout',
-			'accept_job': 'accept a job'
+			'accept_job': 'accept a job',
+			'create_group': 'create a group'
 	}
 	reason_str = reasons_dict[reason] if reason in reasons_dict else None
 
@@ -202,7 +202,7 @@ def accept_job(job_id):
 		flash("No job with that id")
 		abort(404)
 
-	form = AcceptForm()
+	form = forms.AcceptForm()
 	if form.validate_on_submit():
 		# Edit job before sending email
 		job.employee_id = user.id
@@ -233,6 +233,25 @@ def logout():
 		return redirect(url_for('login_required', reason='logout'))
 
 
+@app.route('/create_group'):
+def create_group():
+	"""
+	Uses a form to get the name of a group and then creates that group
+	"""
+
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is None:
+		return redirect(url_for('login_required', reason='create_group'))
+
+	form = forms.GroupForm()
+	if form.validate_on_submit():
+		groupme.create_group(form.data.name, user.id)
+
+	return render_template('create_group.html',
+						   form=form,
+						   logged_in='user_id' in session)
+
+
 @app.errorhandler(404)
 def page_not_found(error):
 	"""
@@ -248,33 +267,6 @@ def internal_error(error):
 	"""
 	db.session.rollback()
 	return render_template('500.html'), 500
-
-def add_job_to_group(job, group):
-	"""
-	Takes a Job and a Group (as defined in models.py)
-	and adds the job to the group
-	"""
-	categories=models.get_active_categories()
-	employer = job.employer
-	bot = groupy.Bot.list().filter(bot_id=group.bot_id).first
-	if bot is None or employer is None:
-		return False
-
-	message_string = '''Hey everyone! A new job has been posted.
-{} would like you to do something.
-Location: {}
-Description: {}
-Compensation: {}
-Category: {}
-Please visit {} to accept this job'''.format(employer.name,
-					  						 job.location,
-					  						 job.description,
-					  						 job.compensation,
-					  						 categories[job.category_id],
-					  						 url_for('accept_job', job_id=job.id, _external=True))
-	
-	bot.post(message_string)
-	return True
 
 # ANYTHING BELOW THIS WILL BE DELETED IN THE FINAL VERSION
 # THEY ARE JUST HERE FOR TESTING

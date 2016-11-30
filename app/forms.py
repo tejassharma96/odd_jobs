@@ -46,3 +46,9 @@ class AcceptForm(FlaskForm):
     This is the form an employee has to fill out to accept a job
     """
     confirm = BooleanField('Confirm', validators=[DataRequired()])
+
+class GroupForm(FlaskForm):
+    """
+    This is the form someone has to fill out to create a group
+    """
+    name = StringField('Name', validators=[DataRequired()])
