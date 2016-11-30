@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Create a Group{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Enter the name of the group you'd like to create.</h2>
+            <p>Make sure to be specific! Use a name like "Champaign Jobs", or "Online Help". You will not be automatically added to the group, make sure you go to the "Request to be added" page and get yourself added to the group!</p>
+            <hr />
+            <form method="post" action="#" name="group">
+                {{ form.hidden_tag() }}
+                <div class="row uniform">
+                    <div class="12u$">
+                        {{ form.name(placeholder="Enter a name for the new group") }}
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" class="button" value="Submit Job" />
+                    </div>
+                </div>
+            </form>
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}
