@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}409 Conflict{% endblock %}
+
+{% block page_source %}
+    <div id="main">
+        <div class="inner">
+            <!-- Text -->
+            <section>
+                <h2>409 Conflict</h2>
+                <p>Oh no! There was a conflict with the resource you were trying to create.</p>
+                <hr />
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <h3>Reason for 404:</h3>
+                        <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                <a href="/index" class="button special fit">Home</a>
+            </section>
+        </div>
+    </div>
+{% endblock %}

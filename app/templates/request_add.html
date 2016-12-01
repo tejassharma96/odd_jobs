@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Join a Group{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Select a group</h2>
+            <p>Select the name of the group you'd like to join from the dropdown below.</p>
+            <hr />
+            <form method="post" action="#" name="group">
+                {{ form.hidden_tag() }}
+                <div class="row uniform">
+                    <div class="12u$">
+                        {{ form.group(placeholder="Select a group") }}
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" class="button" value="Join Group" />
+                    </div>
+                </div>
+            </form>
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Create a category{% endblock %}
+
+{% block page_source %}
+<div id="main">
+    <div class="inner">
+        <!-- Text -->
+        <section>
+            <h2>Enter the name of the category you'd like to create.</h2>
+            <p>Make sure to be specific! Use a name like "Groceries", or "Building". You can then use the category when submitting a job.</p>
+            <hr />
+            <form method="post" action="#" name="group">
+                {{ form.hidden_tag() }}
+                <div class="row uniform">
+                    <div class="12u$">
+                        {{ form.name(placeholder="Enter a name for the new category") }}
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" class="button" value="Create Category" />
+                    </div>
+                </div>
+            </form>
+            <hr />
+        </section>
+    </div>
+</div>
+{% endblock %}
