@@ -25,6 +25,12 @@ class JobForm(FlaskForm):
 
     group = SelectField('Group', choices=group_list)
 
+
+    def __init__(self):
+        FlaskForm.__init__(self)
+        for cls in FlaskForm.__bases__:
+             cls.__init__(self) 
+
 class LoginForm(FlaskForm):
     """
     This is the form that will be used to log in
@@ -52,3 +58,30 @@ class GroupForm(FlaskForm):
     This is the form someone has to fill out to create a group
     """
     name = StringField('Name', validators=[DataRequired()])
+
+class JoinGroupForm(FlaskForm):
+    """
+    This is the dropdown for selecting a group to join
+    """
+    group_dict = models.get_active_groups()
+    group_list = [(str(id), group_name) for id, group_name in group_dict.items()]
+
+    group = SelectField('Group', choices=group_list)
+
+def repopulate_group(form):
+    """
+    Updates the group field in a form from the database
+    """
+    group_dict = models.get_active_groups()
+    group_list = [(str(id), group_name) for id, group_name in group_dict.items()]
+
+    form.group.choices = group_list
+
+def repopulate_categories(form):
+    """
+    Updates the category field in a form from the database
+    """
+    category_dict = models.get_active_categories()
+    category_list = [(str(id), category_name) for id, category_name in category_dict.items()]
+
+    form.category.choices = category_list

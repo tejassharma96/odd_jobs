@@ -34,7 +34,7 @@ def create_group(group_name, creator_id):
     """
 
     new_group = Group.create(group_name, share=True)
-    new_bot = Bot.create("JobPostBot", new_group.group_id)
+    new_bot = Bot.create("JobPostBot", new_group)
     db_group = models.Group(group_name=new_group.name,
                             group_id=new_group.group_id,
                             bot_name=new_bot.name,
@@ -50,7 +50,7 @@ def get_group_share_url(group):
     """
 
     # Get group and make sure it exists
-    group = Group.list().filter(group_id=group.group_id).first
+    group = Group.list().filter(group_id=str(group.group_id)).first
     if group is None:
         return False
 

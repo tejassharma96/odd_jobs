@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, abort, request, session, flash
+from flask import render_template, redirect, url_for, abort, request, session, flash, jsonify
 from app import app, db, models, emails, groupme, forms
 import hashlib
 import groupy
@@ -27,6 +27,8 @@ def job_submit():
 
 	# Create the form and set up validation
 	form = forms.JobForm()
+	forms.repopulate_group(form)
+	forms.repopulate_categories(form)
 	if form.validate_on_submit():
 		job = models.Job(employer_id=user.id,
 						 group_id=int(form.group.data),
@@ -122,7 +124,8 @@ def signup():
 			db.session.commit()
 			session['user_id'] = user.id
 		except sqlalchemy.exc.IntegrityError:
-			print('u idiot')
+			flash("A user with than username or email already exists")
+			abort(409)
 		return redirect(url_for('index'))
 
 	return render_template("signup.html",
@@ -234,7 +237,7 @@ def logout():
 		return redirect(url_for('login_required', reason='logout'))
 
 
-@app.route('/create_group')
+@app.route('/create_group', methods=['GET', 'POST'])
 def create_group():
 	"""
 	Uses a form to get the name of a group and then creates that group
@@ -246,13 +249,14 @@ def create_group():
 
 	form = forms.GroupForm()
 	if form.validate_on_submit():
-		groupme.create_group(form.data.name, user.id)
+		groupme.create_group(form.name.data, user.id)
+		return redirect(url_for('request_add'))
 
 	return render_template('create_group.html',
 						   form=form,
 						   logged_in='user_id' in session)
 
-@app.route('/request_add')
+@app.route('/request_add', methods=['GET', 'POST'])
 def request_add():
 	"""
 	Uses a drop-down to get the name of the group to be added to, generates a join url
@@ -262,8 +266,57 @@ def request_add():
 	if user is None:
 		return redirect(url_for('login_required', reason='request_add'))
 
-	return "What"
+	form = forms.JoinGroupForm()
+	forms.repopulate_group(form)
+	if form.validate_on_submit():
+		return redirect(url_for('join_group_redirect', group_id=form.group.data))
 
+	return render_template('request_add.html',
+						   form=form,
+						   logged_in='user_id' in session)
+
+@app.route('/join_group_redirect/<group_id>')
+def join_group_redirect(group_id):
+	"""
+	Redirects to the share url
+	"""
+
+	group_id = int(group_id)
+	group = models.Group.query.get(group_id)
+	if group is None:
+		print('couldn\'t get group')
+		abort(404)
+
+	share_url = groupme.get_group_share_url(group)
+	return render_template('join_group_redirect.html',
+						   url=share_url)
+
+
+@app.route('/create_category', methods=['GET', 'POST'])
+def create_category():
+	"""
+	Uses a form to get the name of a category and then creates that category
+	"""
+
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is None:
+		return redirect(url_for('login_required', reason='create_category'))
+
+	# Use the same form as a group as it's the same info; just a name
+	form = forms.GroupForm()
+	if form.validate_on_submit():
+		category = models.Category(name=form.name.data, active=True)
+		try:
+			db.session.add(category)
+			db.session.commit()
+		except sqlalchemy.exc.IntegrityError:
+			flash("A category with than name already exists")
+			abort(409)
+		return redirect(url_for('job_submit'))
+
+	return render_template('create_category.html',
+						   form=form,
+						   logged_in='user_id' in session)	
 
 
 @app.errorhandler(404)
@@ -274,6 +327,14 @@ def page_not_found(error):
 	return render_template("404.html"), 404
 
 
+@app.errorhandler(409)
+def page_not_found(error):
+	"""
+	409 Error Handler
+	"""
+	return render_template("409.html"), 409
+
+
 @app.errorhandler(500)
 def internal_error(error):
 	"""
@@ -281,14 +342,3 @@ def internal_error(error):
 	"""
 	db.session.rollback()
 	return render_template('500.html'), 500
-
-# ANYTHING BELOW THIS WILL BE DELETED IN THE FINAL VERSION
-# THEY ARE JUST HERE FOR TESTING
-@app.route('/generic')
-def generic():
-	return render_template("generic.html")
-
-
-@app.route('/elements')
-def elements():
-	return render_template("elements.html")
