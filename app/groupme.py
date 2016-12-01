@@ -1,5 +1,6 @@
 from groupy import Bot, Group
 from app import db, models
+from flask import url_for
 
 def add_job_to_group(job, group):
     """

@@ -25,12 +25,6 @@ class JobForm(FlaskForm):
 
     group = SelectField('Group', choices=group_list)
 
-
-    def __init__(self):
-        FlaskForm.__init__(self)
-        for cls in FlaskForm.__bases__:
-             cls.__init__(self) 
-
 class LoginForm(FlaskForm):
     """
     This is the form that will be used to log in

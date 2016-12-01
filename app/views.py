@@ -29,6 +29,7 @@ def job_submit():
 	form = forms.JobForm()
 	forms.repopulate_group(form)
 	forms.repopulate_categories(form)
+	
 	if form.validate_on_submit():
 		job = models.Job(employer_id=user.id,
 						 group_id=int(form.group.data),
