@@ -62,7 +62,7 @@ class Group(db.Model):
     group_id = db.Column(db.Integer, index=True, unique=True)
     bot_id = db.Column(db.String(), index=True)
     active = db.Column(db.Boolean, index=True)
-    creator_id = db.Column(db.Integer, default=1, db.ForeignKey('user.id'))
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     creator = db.relationship('User', foreign_keys=[creator_id], backref='created_groups')
 
 class User(db.Model):

@@ -157,7 +157,7 @@ def accepted_jobs():
 		return redirect(url_for('login_required', reason='submitted_jobs'))
 	
 	jobs = user.accepted_jobs
-	return render_template("submitted_jobs.html",
+	return render_template("accepted_jobs.html",
 						   user=user,
 						   jobs=jobs,
 						   logged_in='user_id' in session)
@@ -174,7 +174,8 @@ def login_required(reason):
 			'submitted_jobs': 'view your submitted jobs',
 			'logout': 'logout',
 			'accept_job': 'accept a job',
-			'create_group': 'create a group'
+			'create_group': 'create a group',
+			'request_add': 'request to be added to a group'
 	}
 	reason_str = reasons_dict[reason] if reason in reasons_dict else None
 
@@ -233,7 +234,7 @@ def logout():
 		return redirect(url_for('login_required', reason='logout'))
 
 
-@app.route('/create_group'):
+@app.route('/create_group')
 def create_group():
 	"""
 	Uses a form to get the name of a group and then creates that group
@@ -250,6 +251,19 @@ def create_group():
 	return render_template('create_group.html',
 						   form=form,
 						   logged_in='user_id' in session)
+
+@app.route('/request_add')
+def request_add():
+	"""
+	Uses a drop-down to get the name of the group to be added to, generates a join url
+	"""
+
+	user = models.User.query.get(session['user_id']) if 'user_id' in session else None
+	if user is None:
+		return redirect(url_for('login_required', reason='request_add'))
+
+	return "What"
+
 
 
 @app.errorhandler(404)

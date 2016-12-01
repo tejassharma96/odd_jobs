@@ -42,10 +42,14 @@
 						<h2>Menu</h2>
 						<ul>
 							<li><a href="/index">Home</a></li>
-							<li><a href="/job_submit">Submit a Job</a></li>
-							<li><a href="/generic">Request to be added</a></li>
 							<li><a href="/elements">Elements</a></li>
 							{% if logged_in %}
+							<li><a href="/job_submit">Submit a Job</a></li>
+							<li><a href="/request_add">Request to be added</a></li>
+							<li><a href="/submitted_jobs">Submitted Jobs</a></li>
+							<li><a href="/accepted_jobs">Accepted Jobs</a></li>
+							<li><a href="/create_group">Create a group</a></li>
+							<li><a href="/create_category">Create a category</a></li>
 							<li><a href="/logout">Log Out</a></li>
 							{% else %}
 							<li><a href="/login">Log In</a></li>
